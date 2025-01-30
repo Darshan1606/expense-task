@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+
+html {
+  -webkit-text-size-adjust: 100%;
+  font-family: Plus Jakarta Sans, sans-serif;
+  line-height: 1.5;
+  tab-size: 4;
+}
+body {
+  line-height: inherit;
+  margin: 0;
+}
+
+/* ================================================================================================================ */
+/* Dialog  */
+/* ================================================================================================================ */
+
+.dialog {
+  margin-left: auto;
+  margin-right: auto;
+  outline: none;
+}
+@media (min-width: 640px) {
+  .dialog {
+    max-width: 36rem;
+  }
+}
+@media (min-width: 768px) {
+  .dialog {
+    max-width: 42rem;
+  }
+}
+@media (min-width: 1024px) {
+  .dialog {
+    max-width: 56rem;
+  }
+}
+@media (min-width: 1280px) {
+  .dialog {
+    max-width: 72rem;
+  }
+}
+.dialog-content {
+  --tw-bg-opacity: 1;
+  --tw-shadow: 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;
+  --tw-shadow-colored: 0 20px 25px -5px 0 0 #0000, 0 8px 10px -6px 0 0 #0000;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  border-radius: 0.5rem;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  height: 100%;
+  padding: 1.5rem;
+  position: relative;
+}
+.dark .dialog-content {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+@media (min-width: 640px) {
+  .dialog-content {
+    margin-bottom: 4rem;
+    margin-top: 4rem;
+  }
+}
+.dialog-overlay {
+  --tw-bg-opacity: 0.6;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: all 0.15s ease-in-out;
+  z-index: 30;
+}
+.dark .dialog-overlay {
+  --tw-bg-opacity: 0.8;
+}
+.dialog-overlay-after-open {
+  opacity: 1;
+}
+.dialog-overlay-before-close {
+  opacity: 0;
+}
