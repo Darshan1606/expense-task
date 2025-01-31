@@ -17,8 +17,8 @@ module.exports = {
     description: validate.reqString,
   }),
   expenseFilterSchema: Joi.object().keys({
-    user_id: validate.number,
-    category_id: validate.number,
+    user: validate.number,
+    category: validate.number,
     fromDate: validate.date,
     toDate: validate.date,
   }),

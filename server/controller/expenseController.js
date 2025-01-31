@@ -13,98 +13,119 @@ const { getAllActiveUsers } = require("../services/userService");
 module.exports = {
   getAllExpense: async (req, res, next) => {
     try {
-      const { user_id, category_id, fromDate, toDate } = req.body;
-      const expense = await getAllExpenseService({
-        user_id,
-        category_id,
-        fromDate,
-        toDate,
-      });
-      res.json({
+      const { user, category, fromDate, toDate } = req.body;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10;
+
+      const expense = await getAllExpenseService(
+        {
+          user_id: user,
+          category_id: category,
+          fromDate,
+          toDate,
+        },
+        page,
+        pageSize
+      );
+
+      res.status(200).json({
         success: true,
-        message: "get all expense categories successfully",
-        data: expense,
+        message: "Retrieved all expenses successfully",
+        data: expense.data,
+        pagination: expense.pagination,
       });
     } catch (error) {
+      console.error("getAllExpense Error:", error.message);
       next(error);
     }
   },
+
   getAllConfig: async (req, res, next) => {
     try {
       const users = await getAllActiveUsers();
       const categories = await getAllExpenseCategoryOptions();
 
-      res.json({
+      res.status(200).json({
         success: true,
-        message: "get all config successfully",
+        message: "Successfully retrieved all configuration data",
         data: {
           users,
           categories,
         },
       });
     } catch (error) {
+      console.error("getAllConfig Error:", error.message);
       next(error);
     }
   },
+
   addExpense: async (req, res, next) => {
     try {
       const expense = await addExpenseService(req.body);
 
-      res.json({
+      res.status(201).json({
         success: true,
-        message: "add expense  successfully",
+        message: "Expense added successfully",
         result: {
           name: expense.name,
           id: expense.id,
         },
       });
     } catch (error) {
+      console.error("addExpense Error:", error.message);
       next(error);
     }
   },
+
   updateExpense: async (req, res, next) => {
     try {
-      let isExists = await findExpenseByIdService(req.params.id);
+      const expense = await findExpenseByIdService(req.params.id);
 
-      if (isExists) {
-        const expense = await editExpenseService(req.params.id, req.body);
+      if (expense) {
+        const updatedExpense = await editExpenseService(
+          req.params.id,
+          req.body
+        );
 
-        res.json({
+        res.status(200).json({
           success: true,
-          message: "edit expense  successfully",
+          message: "Expense updated successfully",
           result: {
-            expense__name: expense.expense__name,
-            _id: expense._id,
+            name: updatedExpense.name,
+            id: updatedExpense.id,
           },
         });
       } else {
-        res.json({
+        res.status(404).json({
           success: false,
-          message: "expense  not found",
+          message: "Expense not found",
         });
       }
     } catch (error) {
+      console.error("updateExpense Error:", error.message);
       next(error);
     }
   },
+
   deleteExpense: async (req, res, next) => {
     try {
-      let isExists = await findExpenseByIdService(req.params.id);
+      const expense = await findExpenseByIdService(req.params.id);
 
-      if (isExists) {
+      if (expense) {
         await deleteExpenseService(req.params.id);
 
-        res.json({
+        res.status(200).json({
           success: true,
-          message: "delete expense  successfully",
+          message: "Expense deleted successfully",
         });
       } else {
-        res.json({
+        res.status(404).json({
           success: false,
-          message: "expense  not found",
+          message: "Expense not found",
         });
       }
     } catch (error) {
+      console.error("deleteExpense Error:", error.message);
       next(error);
     }
   },

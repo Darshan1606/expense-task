@@ -1,7 +1,10 @@
 import api from "./api";
 
-export const getAllExpenses = async (data) => {
-  return await api.post("/expense/get-all", data);
+export const getAllExpenses = async (data, page, pageSize) => {
+  return await api.post(
+    `/expense/get-all?page=${page}&pageSize=${pageSize}`,
+    data
+  );
 };
 
 export const addExpense = async (data) => {

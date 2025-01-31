@@ -19,7 +19,7 @@ api.interceptors.request.use(
     const user = localStorage.getItem(PERSIST_STORE_NAME);
     const authData = JSON.parse(user)?.auth;
     const token = JSON.parse(authData)?.session?.token;
-    console.log("token", token);
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -1,13 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Button from "../../components/ui/button";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Pencil, Trash } from "lucide-react";
 import Thead from "../../components/ui/table/thead";
 import useToast from "../../hooks/useToast";
 import { PAGE_SIZE } from "../../constants/app.constant";
-import { deleteExpense, getAllExpenses } from "../../services/expenseService";
+import {
+  deleteExpense,
+  getAllConfig,
+  getAllExpenses,
+} from "../../services/expenseService";
 import Pagination from "../../components/template/pagination";
 import ExpenseForm from "./expenseForm";
 import Dialog from "../../components/ui/dialog";
+import { formatDateToDDMMMYYYY } from "../../utils/timeAndDateFormat";
+import SelectField from "../../components/ui/select";
+import Input from "../../components/ui/input";
 
 const headers = ["Date", "User", "Category", "Amount", "Description", "Action"];
 
@@ -19,7 +26,14 @@ const Expenses = () => {
   const [filters, setFilters] = useState({
     currentPage: 1,
     total: 0,
-    search: "",
+    category: "",
+    user: "",
+    fromDate: "",
+    toDate: "",
+  });
+  const [config, setConfig] = useState({
+    users: [],
+    categories: [],
   });
 
   const [selectedData, setSelectedData] = useState();
@@ -30,13 +44,41 @@ const Expenses = () => {
     setExpenseFlag(true);
   }, []);
 
+  const getConfig = async () => {
+    try {
+      const resp = await getAllConfig();
+      if (resp.success) {
+        setConfig({
+          users: resp?.data?.users || [],
+          categories: resp?.data?.categories || [],
+        });
+      }
+    } catch (err) {
+      console.log("err", err);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    getConfig();
+  }, []);
+
   const getExpenses = useCallback(async () => {
     if (expenseFlag) {
       try {
         setLoading(true);
         const payload = {};
-        if (filters?.search?.length > 2) {
-          payload.search = filters?.search;
+        if (filters?.category) {
+          payload.category = filters?.category;
+        }
+        if (filters?.user) {
+          payload.user = filters?.user;
+        }
+        if (filters?.fromDate) {
+          payload.fromDate = filters?.fromDate;
+        }
+        if (filters?.toDate) {
+          payload.toDate = filters?.toDate;
         }
         const resp = await getAllExpenses(
           payload,
@@ -48,7 +90,7 @@ const Expenses = () => {
           setFilters({
             ...filters,
             currentPage: resp?.pagination?.currentPage,
-            total: resp?.pagination?.total,
+            total: resp?.pagination?.totalRecords,
           });
         }
       } catch (err) {
@@ -136,6 +178,66 @@ const Expenses = () => {
           Add Expense
         </Button>
       </div>
+      <div className="grid grid-cols-4 gap-4 my-4">
+        <SelectField
+          isClearable
+          labelName="Filter by category"
+          placeholder="Select Expense Category"
+          options={config?.categories}
+          onChange={(val) => {
+            setFilters({
+              ...filters,
+              currentPage: 1,
+              category: val?.value,
+            });
+            setExpenseFlag(true);
+          }}
+        />
+        <SelectField
+          isClearable
+          labelName="Filter by user"
+          placeholder="Select User"
+          options={config?.users}
+          onChange={(val) => {
+            setFilters({
+              ...filters,
+              currentPage: 1,
+              user: val?.value,
+            });
+            setExpenseFlag(true);
+          }}
+        />
+        <Input
+          type="date"
+          label="From Date"
+          placeholder="Select date"
+          size="medium"
+          autoComplete="off"
+          onChange={(e) => {
+            setFilters({
+              ...filters,
+              currentPage: 1,
+              fromDate: e.target.value,
+            });
+            setExpenseFlag(true);
+          }}
+        />
+        <Input
+          type="date"
+          label="To Date"
+          placeholder="Select date"
+          size="medium"
+          autoComplete="off"
+          onChange={(e) => {
+            setFilters({
+              ...filters,
+              currentPage: 1,
+              toDate: e.target.value,
+            });
+            setExpenseFlag(true);
+          }}
+        />
+      </div>
       <div className="overflow-x-auto shadow-primary p-4 rounded-md">
         <table className="min-w-full bg-white ">
           {/* Table Head */}
@@ -144,18 +246,40 @@ const Expenses = () => {
           {/* Table Body */}
           <tbody className="text-sm">
             {expenses?.length > 0 ? (
-              expenses?.map((row, rowIndex) => (
+              expenses?.map((exp, rowIndex) => (
                 <tr
                   key={rowIndex}
                   className={`${
                     expenses?.length === rowIndex + 1 ? "" : "border-b"
                   } hover:bg-gray-50 `}
                 >
-                  <td className="p-2">{row?.date}</td>
-                  <td className="p-2">{row?.user}</td>
-                  <td className="p-2">{row?.category}</td>
-                  <td className="p-2">{row?.amount}</td>
-                  <td className="p-2">{row?.description}</td>
+                  <td className="p-2">{formatDateToDDMMMYYYY(exp?.date)}</td>
+                  <td className="p-2">{exp?.user_name}</td>
+                  <td className="p-2">{exp?.category_name}</td>
+                  <td className="p-2">{exp?.amount}</td>
+                  <td className="p-2">{exp?.description}</td>
+                  <td className="p-2">
+                    <div className="flex justify-start items-center text-base gap-2">
+                      <span
+                        onClick={() => {
+                          setSelectedData(exp);
+                          setIsModalOpen(true);
+                        }}
+                        className="cursor-pointer p-2 text-gray-100 bg-blue-500 rounded-full"
+                      >
+                        <Pencil size={16} />
+                      </span>
+                      <span
+                        onClick={() => {
+                          setSelectedData(exp);
+                          setIsDeleteOpen(true);
+                        }}
+                        className="cursor-pointer p-2 text-gray-100 bg-red-500 rounded-full"
+                      >
+                        <Trash size={16} />
+                      </span>
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (

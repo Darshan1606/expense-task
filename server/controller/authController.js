@@ -15,7 +15,7 @@ module.exports = {
       let existUser = await getAdminByEmail(user.email);
 
       if (!existUser) {
-        return res.json({
+        return res.status(404).json({
           success: false,
           message: "User Not Found",
         });
@@ -26,26 +26,30 @@ module.exports = {
         existUser.password
       );
 
+      if (!passwordMatch) {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid username or password",
+        });
+      }
+
       const accessToken = jwt.sign(user, JWT_SECRET_KEY, {
         expiresIn: "10h",
       });
 
-      if (passwordMatch) {
-        res.json({
-          success: true,
-          isAuth: true,
-          message: "logged in successfully",
-          token: accessToken,
-          result: {
-            id: existUser._id,
-            name: existUser.name,
-            email: existUser.email,
-          },
-        });
-      } else {
-        res.status(401).json({ message: "Invalid username or password" });
-      }
+      res.status(200).json({
+        success: true,
+        isAuth: true,
+        message: "Logged in successfully",
+        token: accessToken,
+        result: {
+          id: existUser._id,
+          name: existUser.name,
+          email: existUser.email,
+        },
+      });
     } catch (error) {
+      console.error("Login error:", error.message);
       next(error);
     }
   },

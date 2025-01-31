@@ -5,10 +5,11 @@ import Button from "../../components/ui/button";
 import Input from "../../components/ui/input";
 import { addUser, updateUser } from "../../services/userService";
 import { userValidationSchema } from "../../validations/userSchema";
+import useToast from "../../hooks/useToast";
 
 const UserForm = (props) => {
   const { isOpen, onClose, setFlag, type = "add", data = {} } = props;
-
+  const { successToast, errorToast } = useToast();
   const onSave = async (values, setSubmitting) => {
     setSubmitting(true);
     const payload = {
@@ -16,8 +17,8 @@ const UserForm = (props) => {
       email: values?.email,
     };
 
+    let resp;
     try {
-      let resp;
       if (type === "edit") {
         // called edit api
         resp = await updateUser(data?.id, payload);
@@ -27,11 +28,11 @@ const UserForm = (props) => {
       }
 
       if (resp.success) {
-        // toast
+        successToast(resp?.message);
       }
     } catch (err) {
       console.log("err", err);
-      // toast
+      errorToast(resp?.message || resp?.error?.message);
     } finally {
       setSubmitting(false);
       setFlag(true);

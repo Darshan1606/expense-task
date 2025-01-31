@@ -14,6 +14,7 @@ const SelectField = (props) => {
     onChange,
     error,
     errorMessage,
+    ...rest
   } = props;
 
   const getButtonSize = () => {
@@ -88,6 +89,7 @@ const SelectField = (props) => {
               borderRadius: "8px",
             }),
           }}
+          {...rest}
         />
       </div>
 

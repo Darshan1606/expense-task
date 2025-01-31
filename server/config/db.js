@@ -1,4 +1,6 @@
 const { Pool } = require("pg");
+const bcrypt = require("bcrypt");
+
 const {
   DB_USER,
   DB_HOST,
@@ -49,7 +51,6 @@ pool
       [adminEmail]
     );
     if (adminCheck.rowCount === 0) {
-      const bcrypt = require("bcrypt");
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
       // Insert default admin

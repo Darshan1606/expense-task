@@ -33,7 +33,6 @@ const CategoryForm = (props) => {
       }
     } catch (err) {
       console.log("err", err);
-      // toast
       errorToast(resp?.message || resp?.error?.message);
     } finally {
       setSubmitting(false);

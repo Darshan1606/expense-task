@@ -43,8 +43,14 @@ const Login = () => {
     <div className="flex justify-center items-center mx-auto h-screen relative">
       <div className="w-[400px] px-6 py-8 sm:bg-white shadow-primary rounded-md ">
         <div className="my-8 text-center">
+          <span className="text-lg font-bold text-primary-dark">
+            Expense Tracker
+          </span>
+        </div>
+        <div className="my-8 text-center">
           <span className="text-2xl font-bold">Login</span>
         </div>
+
         <Formik
           initialValues={{
             email: "",
@@ -74,7 +80,7 @@ const Login = () => {
               <div className="mb-8">
                 <PasswordInput
                   label="Password"
-                  type="text"
+                  type="password"
                   placeholder="Enter your password"
                   size="medium"
                   name="password"

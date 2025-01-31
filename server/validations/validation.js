@@ -11,14 +11,9 @@ module.exports = {
   reqNumber: Joi.number().required(),
   array: Joi.array(),
   reqArray: Joi.array().required(),
-  arrayObj: Joi.array().items(Joi.object().keys()),
-  reqArrayObj: Joi.array().items(Joi.object().keys()).required(),
   boolean: Joi.boolean(),
   reqBoolean: Joi.boolean().required(),
   date: Joi.date(),
   reqDate: Joi.date().required(),
-  id: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .required(),
   object: Joi.object().required(),
 };

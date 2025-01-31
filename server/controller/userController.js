@@ -1,37 +1,61 @@
 const userService = require("../services/userService");
 
 module.exports = {
-  getAllUsers: async (req, res) => {
+  getAllUsers: async (req, res, next) => {
     try {
-      const users = await userService.getAllUsers();
-      res.json({
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10;
+
+      const users = await userService.getAllUsers(page, pageSize);
+
+      res.status(200).json({
         success: true,
-        message: "get all users successfully",
-        data: users,
+        message: "Retrieved all users successfully",
+        data: users.data,
+        pagination: users.pagination,
       });
     } catch (error) {
-      res.status(500).json({ error: "Failed to get users" });
+      console.error("getAllUsers Error:", error.message);
+      next(error);
     }
   },
-  getUserById: async (req, res) => {
+
+  getUserById: async (req, res, next) => {
     try {
       const user = await userService.getUser(req.params.id);
-      if (!user) return res.status(404).json({ error: "User not found" });
-      res.status(200).json(user);
+      if (!user)
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+
+      res.status(200).json({
+        success: true,
+        message: "User retrieved successfully",
+        data: user,
+      });
     } catch (error) {
-      res.status(500).json({ error: "Failed to get user" });
+      console.error("getUserById Error:", error.message);
+      next(error);
     }
   },
-  addUser: async (req, res) => {
+
+  addUser: async (req, res, next) => {
     try {
       const { name, email } = req.body;
       const newUser = await userService.addUser(name, email);
-      res.status(201).json(newUser);
+
+      res.status(201).json({
+        success: true,
+        message: "User created successfully",
+        result: newUser,
+      });
     } catch (error) {
-      res.status(500).json({ error: "Failed to create user" });
+      console.error("addUser Error:", error.message);
+      next(error);
     }
   },
-  updateUser: async (req, res) => {
+
+  updateUser: async (req, res, next) => {
     try {
       const { name, email } = req.body;
       const updatedUser = await userService.updateUser(
@@ -39,29 +63,68 @@ module.exports = {
         name,
         email
       );
-      res.status(200).json(updatedUser);
+
+      if (!updatedUser) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "User updated successfully",
+        result: updatedUser,
+      });
     } catch (error) {
-      res.status(500).json({ error: "Failed to update user" });
+      console.error("updateUser Error:", error.message);
+      next(error);
     }
   },
-  changeUserStatus: async (req, res) => {
+
+  changeUserStatus: async (req, res, next) => {
     try {
       const { status } = req.body;
       const updatedUser = await userService.changeUserStatus(
         req.params.id,
         status
       );
-      res.status(200).json(updatedUser);
+
+      if (!updatedUser) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "User status updated successfully",
+        result: updatedUser,
+      });
     } catch (error) {
-      res.status(500).json({ error: "Failed to update user status" });
+      console.error("changeUserStatus Error:", error.message);
+      next(error);
     }
   },
-  deleteUser: async (req, res) => {
+
+  deleteUser: async (req, res, next) => {
     try {
+      const user = await userService.getUser(req.params.id);
+      if (!user)
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+
       await userService.deleteUser(req.params.id);
-      res.status(204).end();
+
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+      });
     } catch (error) {
-      res.status(500).json({ error: "Failed to delete user" });
+      console.error("deleteUser Error:", error.message);
+      next(error);
     }
   },
 };

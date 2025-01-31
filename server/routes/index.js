@@ -2,6 +2,7 @@ const authRoutes = require("./auth.Routes");
 const expenseCategoryRoutes = require("./expenseCategory.Routes");
 const userRoutes = require("./users.Routes");
 const expenseRoutes = require("./expense.Routes");
+const dashboardRoutes = require("./dashboard.Routes");
 
 module.exports = {
   // api routes
@@ -10,5 +11,6 @@ module.exports = {
     app.use("/expense-category", expenseCategoryRoutes);
     app.use("/user", userRoutes);
     app.use("/expense", expenseRoutes);
+    app.use("/dashboard", dashboardRoutes);
   },
 };

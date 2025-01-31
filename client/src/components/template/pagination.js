@@ -41,7 +41,7 @@ const Pagination = ({
       <div className="flex justify-center items-center py-5 gap-5">
         <div>
           <div
-            className={`rounded-lg border border-theme p-2 sm:p-[11px] bg-theme ${
+            className={`rounded-lg border border-theme p-2  bg-gray-300 ${
               currentPage === 1
                 ? "cursor-not-allowed opacity-50"
                 : "cursor-pointer"
@@ -79,8 +79,8 @@ const Pagination = ({
               }}
               className={`${
                 number === currentPage
-                  ? "text-white bg-theme "
-                  : "text-theme hover:text-white bg-white hover:bg-theme cursor-pointer "
+                  ? "text-white bg-primary-dark "
+                  : "text-theme hover:text-white bg-white hover:bg-primary-dark cursor-pointer "
               } transition duration-200 ease-in-out rounded-lg border border-theme text-base font-semibold px-3 py-1 sm:px-[14px] sm:py-[7px] w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] text-center `}
             >
               {number}
@@ -104,7 +104,7 @@ const Pagination = ({
         </div>
         <div>
           <div
-            className={`rounded-lg border border-theme p-2 sm:p-[11px] bg-theme ${
+            className={`rounded-lg border border-theme p-2 bg-gray-300 ${
               currentPage === totalPages
                 ? "cursor-not-allowed opacity-50"
                 : "cursor-pointer"

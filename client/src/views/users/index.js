@@ -53,7 +53,7 @@ const Users = () => {
           setFilters({
             ...filters,
             currentPage: resp?.pagination?.currentPage,
-            total: resp?.pagination?.total,
+            total: resp?.pagination?.totalRecords,
           });
         }
       } catch (err) {

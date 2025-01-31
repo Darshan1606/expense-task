@@ -1,7 +1,7 @@
 import api from "./api";
 
-export const getAllUsers = async (data) => {
-  return await api.get("/user/get-all", data);
+export const getAllUsers = async (data, page, pageSize) => {
+  return await api.get(`/user/get-all?page=${page}&pageSize=${pageSize}`, data);
 };
 
 export const addUser = async (data) => {
